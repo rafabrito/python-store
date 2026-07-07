@@ -1,9 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class Cliente(models.Model):
-    # user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
-    nome_cliente = models.CharField(max_length= 255,null=True)
+    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     morada = models.CharField(max_length = 255, null=True)
     cidade = models.CharField(max_length = 50, null=True)
     telefone = models.CharField(max_length = 50, null=True)
@@ -14,4 +15,10 @@ class Cliente(models.Model):
     deleted_at = models.DateTimeField(blank=True, null=True)
 
     def __str__(self) -> str:
-        return self.nome_cliente
+        return self.user.username
+
+    @receiver(post_save, sender=User)
+    def update_cliente_signal(sender, instance, created, **kwargs):
+        if created:
+            Cliente.objects.create(user=instance)
+        instance.cliente.save()
