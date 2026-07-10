@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from .models import *
 
 class ClienteForm(ModelForm):
+    
     morada = forms.CharField(
         label="Endereço",
         widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Endereço'}),
@@ -23,7 +24,7 @@ class ClienteForm(ModelForm):
     class Meta:
         model = Cliente
         # fields = '__all__'
-        fields = ['morada', 'cidade', 'telefone']
+        fields = ['morada', 'cidade', 'telefone', 'purl']
         # exclude = ['user']
 
 class CreateUserForm(UserCreationForm):

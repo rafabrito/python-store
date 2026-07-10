@@ -8,49 +8,49 @@
             <div class="col-sm-6 offset-sm-3">
                 <h3 class="text-center">Registro de Novo Cliente</h3>
                 
-                <form action="?a=criar_cliente" method="post">
+                <form action="{% url 'criar_cliente' %}" method="post">
                     {% csrf_token %}
 
                     <!-- email -->
                     <div class="my-3">
                         <label>Email</label>
-                        {{ form1.email }}
+                        {{ user_form.email }}
                     </div>
 
                     <!-- senha_1 -->
                     <div class="my-3">
                         <label>Senha</label>
-                        {{ form1.password1 }}
+                        {{ user_form.password1 }}
                     </div>
 
                     <!-- senha_2 -->
                     <div class="my-3">
                         <label>Repetir a Senha</label>
-                        {{ form1.password2 }}
+                        {{ user_form.password2 }}
                     </div>
 
                     <!-- nome_completo -->
                     <div class="my-3">
                         <label>Nome Completo</label>
-                        {{ form1.username }}
+                        {{ user_form.username }}
                     </div>
 
                     <!-- morada -->
                     <div class="my-3">
                         <label>Endereço</label>
-                        {{ form2.morada}}
+                        {{ cliente_form.morada}}
                     </div>
 
                     <!-- cidade -->
                     <div class="my-3">
                         <label>Cidade</label>
-                        {{ form2.cidade}}
+                        {{ cliente_form.cidade}}
                     </div>
 
                     <!-- telefone -->
                     <div class="my-3">
                         <label>Telefone</label>
-                        {{ form2.telefone}}
+                        {{ cliente_form.telefone}}
                     </div>
 
                     <!-- submit -->
@@ -58,9 +58,12 @@
                         <input type="submit" value="Criar conta" class="btn btn-primary">
                     </div>
 
-                    {% for message in messag %}
-                        <p> {{messag}} </p>
-                    {% endfor %}
+                    {% if user_form.errors or cliente_form.errors %}
+                        <div class="alert alert-danger text-center">
+                            {{ user_form.errors  }}
+                            {{ cliente_form.errors  }} 
+                        </div>
+                    {% endif %}
 
                 </form> 
             </div>

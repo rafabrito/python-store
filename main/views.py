@@ -7,8 +7,11 @@ from django.contrib import messages
 
 from .models import Cliente
 from .forms import CreateUserForm, ClienteForm
+from .email import EnviarEmail
 
-# Create your views here.
+import string, random
+
+
 def index(request):
 
     if request.method == 'GET':
@@ -17,38 +20,75 @@ def index(request):
 def criar_cliente(request):
     
     if request.method == 'GET':
-        form1 = CreateUserForm()
-        form2 = ClienteForm()
-        context = {'form1': form1, 'form2': form2}
+        user_form = CreateUserForm()
+        cliente_form = ClienteForm(initial={'purl': ''})
+        context = {'user_form': user_form, 'cliente_form': cliente_form}
         return render(request, "criar_cliente.html", context)
     elif request.method == 'POST':
-        form1 = CreateUserForm(request.POST)
-        form2 = ClienteForm(request.POST)
-        print(form1.is_valid())
-        print(form2.is_valid())
-        if form1.is_valid() and form2.is_valid():
-            user = form1.save()
-            user.refresh_from_db()
-            user.cliente.morada = form2.cleaned_data.get('morada')
-            user.cliente.cidade = form2.cleaned_data.get('cidade')
-            user.cliente.telefone = form2.cleaned_data.get('telefone')
-            user.save();
-            # raw_password = form1.cleaned_data.get('password1')
-            # user = authenticate(username=user.username, password=raw_password)
-            # login(request, user)
+        user_form = CreateUserForm(request.POST)
+        cliente_form = ClienteForm(request.POST)
+        print(user_form.is_valid())
+        print(cliente_form.is_valid())
+        if user_form.is_valid() and cliente_form.is_valid():
+            # Salva o usuário primeiro
+            user = user_form.save()
+           
+            # Cria uma instancia do cliente sem salvar no banco de dados
+            purl = criar_hash()
+            cliente = cliente_form.save(commit=False)
+            cliente.purl = purl
 
-            # messages.success(request, 'Conta criada com sucesso')
-            return redirect('index');
+            # Associa o usuário ao cliente
+            cliente.user = user
+
+            # salva o cliente no banco de dados
+            cliente.save();
+
+            email = user_form.cleaned_data['email']
+            print(email, purl)
+            email_confirmacao = EnviarEmail()
+            email_confirmacao.enviar_email_confirmacao_novo_cliente(email, purl)
+            
+            messages.success(request, 'Conta criada com sucesso')
+            return redirect('index')
     
-        context = {'form1': form1, 'form2': form2}
+        context = {'user_form': user_form, 'cliente_form': cliente_form}
         return render(request, "criar_cliente.html", context)
         
-        # cliente = Cliente()
-        # cliente.nome_cliente = request.POST['text_nome_completo']
-        # cliente.morada = request.POST['text_morada']
-        # cliente.cidade = request.POST['text_cidade']
-        # cliente.telefone = request.POST['text_telefone']
-        # cliente.save()
+def confirmar_email(request):
+    if request.method == 'GET':
 
+        # verificar se existe na query string um purl
+        if request.GET.get('purl') == None:
+            return redirect('index');
+
+        purl = request.GET.get('purl')
+
+        # verifica se purl é válido
+        if len(purl) != 12:
+            return redirect('index');
+    
+        # validar email
+        try:
+            cliente = Cliente.objects.get(purl=purl)
+            cliente.purl = None
+            cliente.ativo = True
+            cliente.save()
+            return render(request, 'conta_confirmada_sucesso.html')
+        except Cliente.DoesNotExist:
+            return redirect('index')
+
+def login_cliente(request):
+    
+    if request.method == 'GET':
+        return HttpResponse('Página Login')
+
+def criar_hash(tamanho=12):
+    # Define os caracteres permitidos (letras maiúsculas/minúsculas e números)
+    caracteres = string.ascii_letters + string.digits
+    
+    # Gera a string aleatória de 12 caracteres
+    purl = ''.join(random.choice(caracteres) for _ in range(tamanho))
+    return purl
         
-# def cadastrar_cliente(request):
+
