@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import get_user_model
+
 
 from django.contrib import messages
 
@@ -16,6 +18,11 @@ def index(request):
 
     if request.method == 'GET':
         return render(request, "inicio.html")
+
+def loja(request):
+
+    if request.method == 'GET':
+        return render(request, "loja.html")
 
 def criar_cliente(request):
     
@@ -49,8 +56,8 @@ def criar_cliente(request):
             email_confirmacao = EnviarEmail()
             email_confirmacao.enviar_email_confirmacao_novo_cliente(email, purl)
             
-            messages.success(request, 'Conta criada com sucesso')
-            return redirect('index')
+            # messages.success(request, 'Conta criada com sucesso')
+            return render(request, "criar_cliente_sucesso.html")
     
         context = {'user_form': user_form, 'cliente_form': cliente_form}
         return render(request, "criar_cliente.html", context)
@@ -79,9 +86,32 @@ def confirmar_email(request):
             return redirect('index')
 
 def login_cliente(request):
-    
+    context = {}
     if request.method == 'GET':
-        return HttpResponse('Página Login')
+        return render(request, 'login_form.html', context)
+    elif request.method == 'POST':
+        usuario = request.POST.get('text_usuario')
+        senha = request.POST.get('text_senha')
+        # User = get_user_model()
+        try:
+            # cliente = Cliente.objects.get(user__email=usuario, ativo=1, purl=None)
+            cliente = Cliente.objects.get(user__username=usuario, ativo=1, purl=None)
+            print(cliente)
+            if cliente:
+                user = authenticate(request, username=usuario, password=senha)
+                if user is not None:
+                    login(request, user)
+                    return redirect('index')
+                else:
+                    messages.info(request, 'Login inválido')
+                    return render(request, 'login_form.html', context)
+        except Cliente.DoesNotExist:
+            messages.info(request, 'Login inválido.')
+            return render(request, 'login_form.html', context)
+
+def logout_cliente(request):
+    logout(request)
+    return redirect('login_cliente')
 
 def criar_hash(tamanho=12):
     # Define os caracteres permitidos (letras maiúsculas/minúsculas e números)

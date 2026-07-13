@@ -1,0 +1,42 @@
+{% extends 'inicio.html' %}
+
+{% comment %} {% block title %} Criar Cliente {% endblock %} {% endcomment %}
+
+{% block content %}
+    <div class="container">
+        <div class="row my-5">
+            <div class="col-sm-4 offset-sm-4">
+                
+                <div>
+                    <h3 class="text-center">LOGIN</h3>
+
+                    <form action="{% url 'login_cliente' %}" method="post">
+                        {% csrf_token %}
+                        <div class="my-3">
+                            <label>Usuário:</label>
+                            <input class="form-control" type="text" name="text_usuario" placeholder="Usuário" required>
+                        </div>
+
+                        <div class="my-3">
+                            <label>Senha:</label>
+                            <input class="form-control" type="password" name="text_senha" placeholder="Senha" required>
+                        </div>
+
+                        <div class="my-3 text-center">
+                            <input class="btn btn-primary" type="submit" value="Entrar">
+                        </div>
+                    </form>
+
+                    {% if messages %}
+                        <div class="alert alert-danger text-center">
+                            {% for message in messages %}
+                                {{ message }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            
+            </div>
+        </div>
+    </div>
+{% endblock %}
