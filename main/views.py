@@ -3,8 +3,6 @@ from django.http import HttpResponse
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import get_user_model
-
-
 from django.contrib import messages
 
 from .models import Cliente
@@ -24,18 +22,25 @@ def loja(request):
     if request.method == 'GET':
         return render(request, "loja.html")
 
+def carrinho(request):
+
+    if request.method == 'GET':
+        return render(request, "carrinho.html")
+
 def criar_cliente(request):
     
     if request.method == 'GET':
+        # cria os campos do form para o usuário/cliente
         user_form = CreateUserForm()
         cliente_form = ClienteForm(initial={'purl': ''})
+
         context = {'user_form': user_form, 'cliente_form': cliente_form}
         return render(request, "criar_cliente.html", context)
     elif request.method == 'POST':
+        #  obtém os dados do form do usuário/cliente
         user_form = CreateUserForm(request.POST)
         cliente_form = ClienteForm(request.POST)
-        print(user_form.is_valid())
-        print(cliente_form.is_valid())
+        
         if user_form.is_valid() and cliente_form.is_valid():
             # Salva o usuário primeiro
             user = user_form.save()
@@ -52,11 +57,10 @@ def criar_cliente(request):
             cliente.save();
 
             email = user_form.cleaned_data['email']
-            print(email, purl)
+           
             email_confirmacao = EnviarEmail()
             email_confirmacao.enviar_email_confirmacao_novo_cliente(email, purl)
             
-            # messages.success(request, 'Conta criada com sucesso')
             return render(request, "criar_cliente_sucesso.html")
     
         context = {'user_form': user_form, 'cliente_form': cliente_form}
@@ -111,7 +115,7 @@ def login_cliente(request):
 
 def logout_cliente(request):
     logout(request)
-    return redirect('login_cliente')
+    return redirect('index')
 
 def criar_hash(tamanho=12):
     # Define os caracteres permitidos (letras maiúsculas/minúsculas e números)

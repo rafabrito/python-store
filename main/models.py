@@ -16,9 +16,3 @@ class Cliente(models.Model):
 
     def __str__(self) -> str:
         return self.user.username
-
-    # @receiver(post_save, sender=User)
-    # def update_cliente_signal(sender, instance, created, **kwargs):
-    #     if created:
-    #         Cliente.objects.create(user=instance)
-    #     instance.cliente.save()

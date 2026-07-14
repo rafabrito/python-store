@@ -24,15 +24,15 @@
 
                 <!-- verifica se existe cliente na sessão-->
                 {% if user.is_authenticated %}
-                    <a href="" class="nav-item">A minha conta</a>
-                    <a href="{% url 'logout_cliente' %}" class="nav-item">Logout</a>
+                    <i class="fa fa-user"></i> {{ user.email }}
+                    <a href="{% url 'logout_cliente' %}" class="nav-item"><i class="fa fa-sign-out-alt"></i></a>
                 {% else %}
                     <a href="{% url 'login_cliente' %}" class="nav-item">Login</a>
                     <a href="{% url 'criar_cliente' %}" class="nav-item">Criar Conta</a>
                 {% endif %}
                 
 
-                <a href="?a=carrinho"><i class="fas fa-shopping-cart"></i></a>
+                <a href="{% url 'carrinho' %}"><i class="fas fa-shopping-cart"></i></a>
             
                 <span class="badge bg-warning"></span>
              </div>
