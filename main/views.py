@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 
-from .models import Cliente
+from .models import *
 from .forms import CreateUserForm, ClienteForm
 from .email import EnviarEmail
 
@@ -20,7 +20,9 @@ def index(request):
 def loja(request):
 
     if request.method == 'GET':
-        return render(request, "loja.html")
+        lista_produtos = Produto.objects.filter(visivel=True, stock__gt=0, deleted_at=None)
+        context = {'produtos': lista_produtos}
+        return render(request, "loja.html", context)
 
 def carrinho(request):
 

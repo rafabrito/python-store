@@ -7,6 +7,10 @@
         <div class="row">
             <div class="col-12">
                 <h3>Loja</h3>
+                {%for produto in produtos%}
+                    {{ produto.nome_produto }}
+                    <br>
+                {%endfor%}
             </div>
         </div>
     </div>
