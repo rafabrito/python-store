@@ -1,5 +1,9 @@
 /* app.css */
 
+* {
+    box-shadow: inset 0px 0px 1px rgba(255,0,0,1);
+}
+
 .navegacao {
     background-color: rgb(154, 171, 194);
     color: black;
@@ -19,4 +23,8 @@
 .nav-item:hover {
     text-decoration: underline;
     color: white;
+}
+
+.espaco_fundo {
+    margin-bottom: 80px;
 }
