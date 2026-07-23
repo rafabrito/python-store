@@ -3,10 +3,12 @@
 {% comment %} {% block title %} Criar Cliente {% endblock %} {% endcomment %}
 {% load static %}
 {% block content %}
-    <div class="container-fluid espaco_fundo">
+    <div class="container espaco_fundo">
         <div class="row">
-            <div class="col-12">
-                <h3>Loja</h3>
+            <div class="col-12 text-center my-4">
+                <a href="{% url 'loja' %}?c=todos" class="btn btn-primary">Todos</a>
+                <a href="{% url 'loja' %}?c=homem" class="btn btn-primary">Homem</a>
+                <a href="{% url 'loja' %}?c=mulher" class="btn btn-primary">Mulher</a>
             </div>
         </div>
         
@@ -14,12 +16,11 @@
         <div class="row">
             
             {% for produto in produtos %}
-                <div class="col-sm-4 col-6">
-                    <div class="text-center p-3">
+                <div class="col-sm-4 col-6 p-2">
+                    <div class="text-center p-3 box-produto">
                         <img class="img-fluid" src="{% static 'images/produtos/' %}{{ produto.imagem }}">
                         <h3>{{ produto.nome_produto }}</h3>
                         <h2>{{ produto.preco }}</h2>
-                        <p><small>{{ produto.descricao }}</small></p>
                         <div>
                             <button>Adicionar ao carrinho</button>
                         </div>

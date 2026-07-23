@@ -1,8 +1,8 @@
 /* app.css */
 
-* {
+/* * {
     box-shadow: inset 0px 0px 1px rgba(255,0,0,1);
-}
+} */
 
 .navegacao {
     background-color: rgb(154, 171, 194);
@@ -27,4 +27,9 @@
 
 .espaco_fundo {
     margin-bottom: 80px;
+}
+
+.box-produto {
+    border: 1px solid rgb(150,150,150);
+    border-radius: 10px;
 }

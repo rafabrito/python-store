@@ -20,7 +20,16 @@ def index(request):
 def loja(request):
 
     if request.method == 'GET':
-        lista_produtos = Produto.objects.filter(visivel=True, stock__gt=0, deleted_at=None)
+        lista_produtos = None
+        if request.GET.get('c') != None:
+            if request.GET.get('c') != 'todos':
+                c = request.GET.get('c')
+                lista_produtos = Produto.objects.filter(visivel=True, stock__gt=0, deleted_at=None, categoria=c)
+            else:
+                lista_produtos = Produto.objects.filter(visivel=True, stock__gt=0, deleted_at=None)
+        else:
+            lista_produtos = Produto.objects.filter(visivel=True, stock__gt=0, deleted_at=None)
+
         context = {'produtos': lista_produtos}
         return render(request, "loja.html", context)
 
