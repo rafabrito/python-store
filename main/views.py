@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import get_user_model
@@ -33,13 +33,20 @@ def loja(request):
         # obtém a lista de categorias na forma de array através do flat=True
         lista_categorias = Produto.objects.values_list('categoria', flat=True).distinct()
 
-        print(lista_categorias)
         context = {
             'produtos': lista_produtos, 
             'categorias': lista_categorias
         }
 
         return render(request, "loja.html", context)
+
+def adicionar_carrinho(request):
+
+    if request.method == 'GET':
+        id_produto = request.GET.get('id_produto')
+        request.session['teste'] = id_produto
+        
+        return HttpResponse('Adicionado o produto ' + id_produto + ' ao carriho!!')
 
 def carrinho(request):
 

@@ -3,6 +3,7 @@
 {% comment %} {% block title %} Criar Cliente {% endblock %} {% endcomment %}
 {% load static %}
 {% block content %}
+    {{ request.session.teste }}
     <div class="container espaco_fundo">
         <div class="row">
             <div class="col-12 text-center my-4">
@@ -15,19 +16,24 @@
         
         {% comment %} produtos {% endcomment %}
         <div class="row">
-            
-            {% for produto in produtos %}
-                <div class="col-sm-4 col-6 p-2">
-                    <div class="text-center p-3 box-produto">
-                        <img class="img-fluid" src="{% static 'images/produtos/' %}{{ produto.imagem }}">
-                        <h3>{{ produto.nome_produto }}</h3>
-                        <h2>{{ produto.preco }}</h2>
-                        <div>
-                            <button>Adicionar ao carrinho</button>
+            {% if produtos|length == 0 %}
+                <div class="text-center my-5">
+                    <h3>Não existem produtos disponíveis.</h3>
+                </div>
+            {% else %}
+                {% for produto in produtos %}
+                    <div class="col-sm-4 col-6 p-2">
+                        <div class="text-center p-3 box-produto">
+                            <img class="img-fluid" src="{% static 'images/produtos/' %}{{ produto.imagem }}">
+                            <h3>{{ produto.nome_produto }}</h3>
+                            <h2>{{ produto.preco }}$</h2>
+                            <div>
+                                <button class="btn btn-info bt-sm" onclick="adicionar_carrinho({{ produto.id }})"><i class="fas fa-shopping-cart me-2"></i>Adicionar ao carrinho</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
+            {% endif%}
             
         </div>
     </div>
