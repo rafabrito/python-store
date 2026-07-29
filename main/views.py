@@ -30,7 +30,15 @@ def loja(request):
         else:
             lista_produtos = Produto.objects.filter(visivel=True, stock__gt=0, deleted_at=None)
 
-        context = {'produtos': lista_produtos}
+        # obtém a lista de categorias na forma de array através do flat=True
+        lista_categorias = Produto.objects.values_list('categoria', flat=True).distinct()
+
+        print(lista_categorias)
+        context = {
+            'produtos': lista_produtos, 
+            'categorias': lista_categorias
+        }
+
         return render(request, "loja.html", context)
 
 def carrinho(request):

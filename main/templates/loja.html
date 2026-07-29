@@ -7,8 +7,9 @@
         <div class="row">
             <div class="col-12 text-center my-4">
                 <a href="{% url 'loja' %}?c=todos" class="btn btn-primary">Todos</a>
-                <a href="{% url 'loja' %}?c=homem" class="btn btn-primary">Homem</a>
-                <a href="{% url 'loja' %}?c=mulher" class="btn btn-primary">Mulher</a>
+                {% for categoria in categorias %}
+                    <a href="{% url 'loja' %}?c={{ categoria }}" class="btn btn-primary">{{ categoria.capitalize }}</a>
+                {% endfor %}
             </div>
         </div>
         
