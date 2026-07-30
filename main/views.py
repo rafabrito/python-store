@@ -44,9 +44,24 @@ def adicionar_carrinho(request):
 
     if request.method == 'GET':
         id_produto = request.GET.get('id_produto')
-        request.session['teste'] = id_produto
+        carrinho = {}
+
+        if request.session.get('carrinho'):
+            carrinho = request.session['carrinho']
+
+        if id_produto in carrinho:
+             carrinho[id_produto] += 1
+        else:
+            carrinho[id_produto] = 1
+
+        request.session['carrinho'] = carrinho
+
+        total_produto = 0
+
+        for chave in carrinho:
+            total_produto += carrinho[chave]
         
-        return HttpResponse('Adicionado o produto ' + id_produto + ' ao carriho!!')
+        return HttpResponse(total_produto)
 
 def carrinho(request):
 
