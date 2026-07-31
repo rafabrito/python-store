@@ -63,6 +63,13 @@ def adicionar_carrinho(request):
         
         return HttpResponse(total_produto)
 
+def limpar_carrinho(request):
+
+    if request.method == 'GET':
+        request.session['carrinho'] = {}
+
+        return HttpResponse('Ok')
+
 def carrinho(request):
 
     if request.method == 'GET':

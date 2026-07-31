@@ -1,4 +1,6 @@
 {% load static %}
+{% load carrinho_produto %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,7 +36,7 @@
 
                 <a href="{% url 'carrinho' %}"><i class="fas fa-shopping-cart"></i></a>
             
-                <span class="badge bg-warning"></span>
+                <span class="badge bg-warning" id="carrinho">{{ request.session.carrinho|total_produto }}</span>
              </div>
         </div>
     </div>

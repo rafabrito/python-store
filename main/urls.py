@@ -14,6 +14,7 @@ urlpatterns = [
     path("logout_cliente/", views.logout_cliente, name="logout_cliente"),
     
     # carrinho
-    path("loja/adicionar_carrinho/", views.adicionar_carrinho, name="adicionar_carrinho"),
+    path("adicionar_carrinho/", views.adicionar_carrinho, name="adicionar_carrinho"),
+    path("limpar_carrinho/", views.limpar_carrinho, name="limpar_carrinho"),
     path("carrinho/", views.carrinho, name="carrinho"),
 ]
