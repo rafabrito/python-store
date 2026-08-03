@@ -24,11 +24,11 @@ def loja(request):
         if request.GET.get('c') != None:
             if request.GET.get('c') != 'todos':
                 c = request.GET.get('c')
-                lista_produtos = Produto.objects.filter(visivel=True, stock__gt=0, deleted_at=None, categoria=c)
+                lista_produtos = Produto.objects.filter(visivel=True, deleted_at=None, categoria=c)
             else:
-                lista_produtos = Produto.objects.filter(visivel=True, stock__gt=0, deleted_at=None)
+                lista_produtos = Produto.objects.filter(visivel=True, deleted_at=None)
         else:
-            lista_produtos = Produto.objects.filter(visivel=True, stock__gt=0, deleted_at=None)
+            lista_produtos = Produto.objects.filter(visivel=True, deleted_at=None)
 
         # obtém a lista de categorias na forma de array através do flat=True
         lista_categorias = Produto.objects.values_list('categoria', flat=True).distinct()
@@ -43,7 +43,17 @@ def loja(request):
 def adicionar_carrinho(request):
 
     if request.method == 'GET':
+        if request.GET.get('id_produto') == None:
+            return HttpResponse('')
+
         id_produto = request.GET.get('id_produto')
+        produto = Produto.objects.filter(id=id_produto, visivel=True, stock__gt=1, deleted_at=None)
+        print(produto)
+        resultado = True if len(produto) else False
+
+        if resultado == False:
+            return HttpResponse('')
+        
         carrinho = {}
 
         if request.session.get('carrinho'):
@@ -66,9 +76,10 @@ def adicionar_carrinho(request):
 def limpar_carrinho(request):
 
     if request.method == 'GET':
-        request.session['carrinho'] = {}
+        # remover a variável da sessão e evita erro caso não exita a chave
+        request.session.pop('carrinho', None)
 
-        return HttpResponse('Ok')
+    return render(request, "carrinho.html")
 
 def carrinho(request):
 

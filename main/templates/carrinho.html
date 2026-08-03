@@ -1,13 +1,13 @@
 {% extends "inicio.html" %}
 
 {% block content%}
-    {{ request.session.carrinho }}
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
                 <h3>Carrinho</h3>
-                <button onclick="limpar_carrinho()">Limpar</button>
+                <a href="{% url 'limpar_carrinho' %}" class="btn btn-primary btn-sm">Limpar carrinho</a>
             </div>
+            {{ request.session.carrinho }}
         </div>
     </div>
 {% endblock %}
