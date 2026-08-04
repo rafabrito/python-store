@@ -20,6 +20,7 @@ def index(request):
 def loja(request):
 
     if request.method == 'GET':
+        # buscar da lista de produtos disponíveis
         lista_produtos = None
         if request.GET.get('c') != None:
             if request.GET.get('c') != 'todos':
@@ -43,31 +44,38 @@ def loja(request):
 def adicionar_carrinho(request):
 
     if request.method == 'GET':
+        # vai buscar pelo id_produto à query string
         if request.GET.get('id_produto') == None:
-            return HttpResponse('')
+            return HttpResponse(len(request.session.get('carrinho'))) if request.session.get('carrinho') else HttpResponse('')
 
+        # define o id do produto
         id_produto = request.GET.get('id_produto')
-        produto = Produto.objects.filter(id=id_produto, visivel=True, stock__gt=1, deleted_at=None)
-        print(produto)
-        resultado = True if len(produto) else False
 
-        if resultado == False:
-            return HttpResponse('')
-        
+        produto = Produto.objects.filter(id=id_produto, visivel=True, stock__gt=1, deleted_at=None)
+        resultados = True if len(produto) else False
+
+        if resultados == False:
+            return HttpResponse(len(request.session.get('carrinho'))) if request.session.get('carrinho') else HttpResponse('')
+
+        # adiciona/gestão da variável de SESSAO do carrinho
         carrinho = {}
 
         if request.session.get('carrinho'):
             carrinho = request.session['carrinho']
 
+        # adicionar o produto ao carrinho
         if id_produto in carrinho:
-             carrinho[id_produto] += 1
+            #  já existe o produto. Acrescenta mais uma unidade
+            carrinho[id_produto] += 1
         else:
+            # adicionar novo produto ao carrinho
             carrinho[id_produto] = 1
 
+        # atualiza os dados do carrinho na sessão
         request.session['carrinho'] = carrinho
 
+        # devolve a resposta (número de produtos do carrinho)
         total_produto = 0
-
         for chave in carrinho:
             total_produto += carrinho[chave]
         
@@ -89,12 +97,17 @@ def carrinho(request):
 def criar_cliente(request):
     
     if request.method == 'GET':
+        # verifica se já existe sessão aberda
+        if request.user.is_authenticated:
+            return redirect('index')
+
         # cria os campos do form para o usuário/cliente
         user_form = CreateUserForm()
         cliente_form = ClienteForm(initial={'purl': ''})
 
         context = {'user_form': user_form, 'cliente_form': cliente_form}
         return render(request, "criar_cliente.html", context)
+
     elif request.method == 'POST':
         #  obtém os dados do form do usuário/cliente
         user_form = CreateUserForm(request.POST)
@@ -126,8 +139,12 @@ def criar_cliente(request):
         return render(request, "criar_cliente.html", context)
         
 def confirmar_email(request):
-    if request.method == 'GET':
 
+    if request.method == 'GET':
+        # verifica se já existe sessão aberda
+        if request.user.is_authenticated:
+            return redirect('index')
+        
         # verificar se existe na query string um purl
         if request.GET.get('purl') == None:
             return redirect('index');
@@ -149,8 +166,13 @@ def confirmar_email(request):
             return redirect('index')
 
 def login_cliente(request):
+
     context = {}
     if request.method == 'GET':
+        # verifica se já existe um utilizador logado
+        if request.user.is_authenticated:
+            return redirect('index')
+        
         return render(request, 'login_form.html', context)
     elif request.method == 'POST':
         usuario = request.POST.get('text_usuario')
