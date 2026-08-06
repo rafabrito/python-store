@@ -7,7 +7,12 @@
                 <h3>Carrinho</h3>
                 <a href="{% url 'limpar_carrinho' %}" class="btn btn-primary btn-sm">Limpar carrinho</a>
             </div>
-            {{ request.session.carrinho }}
+            {% if carrinho == None %}
+                <p>Carrinho Vazio</p>
+                <p><a href="{% url 'loja' %}" class="btn btn-primary">Loja<a></p>
+            {% else %}
+                    <p>Carrinho...</p>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

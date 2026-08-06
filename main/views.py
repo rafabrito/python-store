@@ -92,7 +92,24 @@ def limpar_carrinho(request):
 def carrinho(request):
 
     if request.method == 'GET':
-        return render(request, "carrinho.html")
+        if request.session.get('carrinho') == None:
+            context = {
+                'carrinho': None
+            }
+        else:
+            ids = []
+            for id_produto in request.session.get('carrinho'):
+                ids.append(id_produto)
+
+            # obtém os produtos a partir de um array de ids
+            resultados = Produto.objects.filter(id__in=ids)
+
+            context = {
+                'carrinho': request.session.get('carrinho')
+            }
+
+        print(resultados)
+        return render(request, "carrinho.html", context)
 
 def criar_cliente(request):
     
