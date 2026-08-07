@@ -104,11 +104,35 @@ def carrinho(request):
             # obtém os produtos a partir de um array de ids
             resultados = Produto.objects.filter(id__in=ids)
 
+            dados_tmp = []
+            for id_produto in request.session.get('carrinho'):
+                for produto in resultados:
+                    if produto.id == int(id_produto):
+                        imagem = produto.imagem
+                        titulo = produto.nome_produto
+                        quantidade = request.session.get('carrinho')[id_produto]
+                        preco = produto.preco * quantidade
+
+                        item = {
+                            'imagem': imagem,
+                            'titulo': titulo,
+                            'quantidade': quantidade,
+                            'preco': preco
+                        }
+
+                        dados_tmp.append(item)
+
+                        break
+            total_encomenda = 0
+            for produto in dados_tmp:
+                total_encomenda += produto['preco']
+
+            dados_tmp.append(total_encomenda)    
+
             context = {
-                'carrinho': request.session.get('carrinho')
+                'carrinho': dados_tmp
             }
 
-        print(resultados)
         return render(request, "carrinho.html", context)
 
 def criar_cliente(request):
@@ -198,7 +222,6 @@ def login_cliente(request):
         try:
             # cliente = Cliente.objects.get(user__email=usuario, ativo=1, purl=None)
             cliente = Cliente.objects.get(user__username=usuario, ativo=1, purl=None)
-            print(cliente)
             if cliente:
                 user = authenticate(request, username=usuario, password=senha)
                 if user is not None:
