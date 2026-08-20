@@ -1,5 +1,6 @@
 {% extends "inicio.html" %}
 
+{% load static %}
 {% block content%}
     <div class="container-fluid">
         <div class="row">
@@ -11,7 +12,49 @@
                 <p>Carrinho Vazio</p>
                 <p><a href="{% url 'loja' %}" class="btn btn-primary">Loja<a></p>
             {% else %}
-                    <p>Carrinho...</p>
+                    <div style="margin-bottom: 80px">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Produto</th>
+                                    <th>Quantidade</th>
+                                    <th class="text-end">Valor total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% with total_row=carrinho|length|add:"-1" %}
+
+                                    {% for produto in carrinho %}
+                                        {% comment %} compara se o index atual é metor que o total_row {% endcomment %}
+                                        {% if forloop.counter0 < total_row %}
+                                            
+                                            {% comment %} lista de produtos {% endcomment %}
+                                            <tr>
+                                                <td><img src="{% static 'images/produtos/' %}{{ produto.imagem }}" class="img-fluid" width="50px"></td>
+                                                <td>{{ produto.titulo }}</td>
+                                                <td>{{ produto.quantidade }}</td>
+                                                <td class="text-end">{{ produto.preco }}</td>
+                                                <td><button class="btn btn-danger btn-sm"><i class="fas fa-times"></i></button></td>
+                                            </tr>
+                                        {% else %}
+
+                                            {% comment %} total {% endcomment %}
+                                            <tr>
+                                                <td>Total:</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td class="text-end">{{ produto }}</td>
+                                                <td></td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endwith %} 
+                            </tbody>
+                        </table>
+                    <div>
             {% endif %}
         </div>
     </div>
