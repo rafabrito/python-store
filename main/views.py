@@ -81,6 +81,28 @@ def adicionar_carrinho(request):
         
         return HttpResponse(total_produto)
 
+def remover_produto_carrinho(request):
+
+    if request.method == 'GET':
+        # busca o id_produto na query string
+        id_produto = request.GET.get('id_produto')
+        print(id_produto)
+        # busca o carrinho na sessão
+        carrinho = request.session.get('carrinho')
+        
+        # remove produto do carrinho
+        carrinho.pop(id_produto)
+
+        #atualizar carrinho na sessão
+        request.session['carrinho'] = carrinho
+
+        # remover a variável da sessão quando não tem mais produtos
+        if not request.session.get('carrinho'):
+            request.session.pop('carrinho', None)
+
+        # apresentar novamenta a página do carrinho
+        return redirect('carrinho')
+
 def limpar_carrinho(request):
 
     if request.method == 'GET':
@@ -108,12 +130,14 @@ def carrinho(request):
             for id_produto in request.session.get('carrinho'):
                 for produto in resultados:
                     if produto.id == int(id_produto):
+                        id_prod = produto.id
                         imagem = produto.imagem
                         titulo = produto.nome_produto
                         quantidade = request.session.get('carrinho')[id_produto]
                         preco = produto.preco * quantidade
 
                         item = {
+                            'id_produto': id_prod,
                             'imagem': imagem,
                             'titulo': titulo,
                             'quantidade': quantidade,
@@ -126,7 +150,6 @@ def carrinho(request):
             total_encomenda = 0
             for produto in dados_tmp:
                 total_encomenda += produto['preco']
-
             dados_tmp.append(total_encomenda)    
 
             context = {

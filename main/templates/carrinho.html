@@ -2,60 +2,80 @@
 
 {% load static %}
 {% block content%}
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
             <div class="col-12">
-                <h3>Carrinho</h3>
-                <a href="{% url 'limpar_carrinho' %}" class="btn btn-primary btn-sm">Limpar carrinho</a>
+                <h3>A sua encomenda</h3>
+                <hr>
             </div>
-            {% if carrinho == None %}
-                <p>Carrinho Vazio</p>
-                <p><a href="{% url 'loja' %}" class="btn btn-primary">Loja<a></p>
-            {% else %}
-                    <div style="margin-bottom: 80px">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Produto</th>
-                                    <th>Quantidade</th>
-                                    <th class="text-end">Valor total</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
+        </div>
+    </div>
 
-                            <tbody>
-                                {% with total_row=carrinho|length|add:"-1" %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
 
-                                    {% for produto in carrinho %}
-                                        {% comment %} compara se o index atual é metor que o total_row {% endcomment %}
-                                        {% if forloop.counter0 < total_row %}
-                                            
-                                            {% comment %} lista de produtos {% endcomment %}
-                                            <tr>
-                                                <td><img src="{% static 'images/produtos/' %}{{ produto.imagem }}" class="img-fluid" width="50px"></td>
-                                                <td>{{ produto.titulo }}</td>
-                                                <td>{{ produto.quantidade }}</td>
-                                                <td class="text-end">{{ produto.preco }}</td>
-                                                <td><button class="btn btn-danger btn-sm"><i class="fas fa-times"></i></button></td>
-                                            </tr>
-                                        {% else %}
+                {% if carrinho == None %}
+                    <p class="text-center">Não existem produtos no carrinho</p>
+                    <div class="mt-4 text-center">
+                        <a href="{% url 'loja' %}" class="btn btn-primary">Ir para a Loja<a>
+                    </div>
+                {% else %}
+                        <div style="margin-bottom: 80px">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Produto</th>
+                                        <th class="text-center">Quantidade</th>
+                                        <th class="text-end">Valor total</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
 
-                                            {% comment %} total {% endcomment %}
-                                            <tr>
-                                                <td>Total:</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td class="text-end">{{ produto }}</td>
-                                                <td></td>
-                                            </tr>
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endwith %} 
-                            </tbody>
-                        </table>
-                    <div>
-            {% endif %}
+                                <tbody>
+                                    {% with total_row=carrinho|length|add:"-1" %}
+
+                                        {% for produto in carrinho %}
+                                            {% comment %} compara se o index atual é metor que o total_row {% endcomment %}
+                                            {% if forloop.counter0 < total_row %}
+                                                
+                                                {% comment %} lista de produtos {% endcomment %}
+                                                <tr>
+                                                    <td><img src="{% static 'images/produtos/' %}{{ produto.imagem }}" class="img-fluid" width="50px"></td>
+                                                    <td class="align-middle"><h5>{{ produto.titulo }}</h5></td>
+                                                    <td class="text-center align-middle"><h5>{{ produto.quantidade }}</h5></td>
+                                                    <td class="text-end align-middle"><h4>{{ produto.preco }}$</h4></td>
+                                                    <td class="text-center align-middle"><a href="{% url 'remover_produto_carrinho' %}?id_produto={{ produto.id_produto }}" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a></td>
+                                                </tr>
+                                            {% else %}
+
+                                                {% comment %} total {% endcomment %}
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td class="text-end"><h3>Total:<h3></td>
+                                                    <td class="text-end"><h3>{{ produto }}$</h3></td>
+                                                    <td></td>
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endwith %} 
+                                </tbody>
+                            </table>
+
+                            <div class="row">
+                                <div class="col">
+                                    <a href="{% url 'limpar_carrinho' %}" class="btn btn-primary btn-sm">Limpar carrinho</a>
+                                </div>
+                                <div class="col text-end">
+                                    <a href="{% url 'loja' %}" class="btn btn-primary btn-sm">Continuar a comprar</a>
+                                    <a href="#" class="btn btn-primary btn-sm">Finalizar encomenda</a>
+                                </div>
+                            </div>
+                        <div>
+                {% endif %}
+            </div>
         </div>
     </div>
 {% endblock %}
