@@ -66,11 +66,16 @@
 
                             <div class="row">
                                 <div class="col">
-                                    <a href="{% url 'limpar_carrinho' %}" class="btn btn-primary btn-sm">Limpar carrinho</a>
+                                    <button onclick="limpar_carrinho()" class="btn btn-primary btn-sm">Limpar carrinho</button>
+                                    <span class="ms-3" id="confirmar_limpar_carrinho" style="display:none">
+                                        Tem certeza?
+                                        <button onclick="limpar_carrinho_off()" class="btn btn-primary btn-sm">Não</button>
+                                        <a href="{% url 'limpar_carrinho' %}" class="btn btn-primary btn-sm">Sim</a>
+                                    </span>
                                 </div>
                                 <div class="col text-end">
                                     <a href="{% url 'loja' %}" class="btn btn-primary btn-sm">Continuar a comprar</a>
-                                    <a href="#" class="btn btn-primary btn-sm">Finalizar encomenda</a>
+                                    <a href="{% url 'finalizar_encomenda' %}" class="btn btn-primary btn-sm">Finalizar encomenda</a>
                                 </div>
                             </div>
                         <div>

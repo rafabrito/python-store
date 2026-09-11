@@ -158,6 +158,18 @@ def carrinho(request):
 
         return render(request, "carrinho.html", context)
 
+def finalizar_encomenda(request):
+
+    if request.method == 'GET':
+        if not request.user.is_authenticated:
+            #  coloca na sessão um referrer(de onde eu venho) temporário
+            request.session['tmp_carrinho'] = True
+
+            # redirecionar para o quadro de login
+            return redirect('login_cliente')
+
+        return HttpResponse("Ok")
+
 def criar_cliente(request):
     
     if request.method == 'GET':
@@ -248,8 +260,26 @@ def login_cliente(request):
             if cliente:
                 user = authenticate(request, username=usuario, password=senha)
                 if user is not None:
+                    # guardar os dados do carrinho em uma variável 
+                    carrinho = request.session.get('carrinho') if request.session.get('carrinho') else None
+                    # guardar os dados do tmp_carrinho em uma variável 
+                    tmp_carrinho = request.session.get("tmp_carrinho")
+
                     login(request, user)
-                    return redirect('index')
+
+                    # salvar dados do carrinho se existir na nova sessão
+                    if carrinho:
+                        request.session['carrinho'] = carrinho
+
+
+                    if tmp_carrinho:
+                        # remove a variável temporária do escopo
+                        del tmp_carrinho
+
+                        # redireciona para carrinho
+                        return redirect('carrinho')
+                    else:
+                        return redirect('index')
                 else:
                     messages.info(request, 'Login inválido')
                     return render(request, 'login_form.html', context)
@@ -258,7 +288,19 @@ def login_cliente(request):
             return render(request, 'login_form.html', context)
 
 def logout_cliente(request):
+    # guardar os dados do carrinho em uma variável 
+    carrinho = request.session.get('carrinho') if request.session.get('carrinho') else None
+                        
     logout(request)
+
+    # forçar a criação de uma nova sessão limpa
+    if not request.session.session_key:
+        request.session.create()
+
+    # salvar dados do carrinho se existir na nova sessão
+    if carrinho:
+        request.session['carrinho'] = carrinho
+
     return redirect('index')
 
 def criar_hash(tamanho=12):
