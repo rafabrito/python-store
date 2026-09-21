@@ -1,0 +1,68 @@
+{% extends "inicio.html" %}
+
+{% load static %}
+{% load debugar_objeto %}
+{% block content%}
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h3>A sua encomenda - resumo</h3>
+                <hr>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+
+                <div style="margin-bottom: 80px">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th class="text-center">Quantidade</th>
+                                <th class="text-end">Valor total</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% with total_row=carrinho|length|add:"-1" %}
+
+                                {% for produto in carrinho %}
+                                    {% comment %} compara se o index atual é metor que o total_row {% endcomment %}
+                                    {% if forloop.counter0 < total_row %}
+                                        
+                                        {% comment %} lista de produtos {% endcomment %}
+                                        <tr>
+                                            <td class="align-middle">{{ produto.titulo }}</td>
+                                            <td class="text-center align-middle">{{ produto.quantidade }}</td>
+                                            <td class="text-end align-middle">{{ produto.preco }}$</td>
+                                        </tr>
+                                    {% else %}
+
+                                        {% comment %} total {% endcomment %}
+                                        <tr>
+                                            <td></td>
+                                            <td class="text-end"><h4>Total:<h4></td>
+                                            <td class="text-end"><h4>{{ produto }}$</h4></td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endwith %} 
+                        </tbody>
+                    </table>
+                    {{ cliente|coverter_para_dict }}
+                    <div class="row">
+                        <div class="col">
+                            Cancelar
+                        </div>
+                        <div class="col text-end">
+                            Escolher método de pagamento
+                        </div>
+                    </div>
+                <div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

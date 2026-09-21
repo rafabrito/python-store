@@ -168,7 +168,59 @@ def finalizar_encomenda(request):
             # redirecionar para o quadro de login
             return redirect('login_cliente')
 
-        return HttpResponse("Ok")
+        return redirect('finalizar_encomenda_resumo')
+
+def finalizar_encomenda_resumo(request):
+    if request.method == 'GET':
+        if not request.user.is_authenticated:
+            return redirect('index')
+
+        # -----------------------------------
+        # informações do carrinho
+        ids = []
+        for id_produto in request.session.get('carrinho'):
+            ids.append(id_produto)
+
+        # obtém os produtos a partir de um array de ids
+        resultados = Produto.objects.filter(id__in=ids)
+
+        dados_tmp = []
+        for id_produto in request.session.get('carrinho'):
+            for produto in resultados:
+                if produto.id == int(id_produto):
+                    id_prod = produto.id
+                    imagem = produto.imagem
+                    titulo = produto.nome_produto
+                    quantidade = request.session.get('carrinho')[id_produto]
+                    preco = produto.preco * quantidade
+
+                    item = {
+                        'id_produto': id_prod,
+                        'imagem': imagem,
+                        'titulo': titulo,
+                        'quantidade': quantidade,
+                        'preco': preco
+                    }
+
+                    dados_tmp.append(item)
+
+                    break
+        total_encomenda = 0
+        for produto in dados_tmp:
+            total_encomenda += produto['preco']
+        dados_tmp.append(total_encomenda)    
+
+        context = {}
+        context['carrinho'] = dados_tmp
+
+        # -----------------------------------
+        # buscar informações do cliente
+        # cliente = Cliente.objects.get(user__username=usuario, ativo=1, purl=None)
+        dados_cliente = Cliente.objects.get(user__username=request.user)
+        context['cliente'] = dados_cliente
+
+        # apresenta a página do resumo da encomenda
+        return render(request, 'encomenda_resumo.html', context)
 
 def criar_cliente(request):
     
@@ -277,7 +329,7 @@ def login_cliente(request):
                         del tmp_carrinho
 
                         # redireciona para carrinho
-                        return redirect('carrinho')
+                        return redirect('finalizar_encomenda_resumo')
                     else:
                         return redirect('index')
                 else:
